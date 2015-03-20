@@ -1,0 +1,29 @@
+<!doctype html>
+<html ng-app="App">
+  <head>
+    <title>Das unsichtbare Quadrat</title>
+    <link rel="stylesheet" type="text/css" href="public/styles.css">
+    <script src="/jquery.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+     socket = io();
+    </script>
+    <script src="/angular/angular.js"></script>
+    <script src="/public/controller.js"></script>
+  </head>
+  <body ng-controller="frontpage">
+    <ul id="messages"></ul>
+    <ul id="datapoints"></ul>
+    <!--div id="full_square_indicator" ng-if="active_datapoint.state==1">
+      ▢
+    </div-->
+    <div id="interruption_count_indicator" class="show_if_interrupted" data-var="interruption_count">
+      x{{test}}
+    </div>
+    <div>{{active_datapoint.timer}}</div>
+    <!--form action="">
+      <input id="m" autocomplete="off" /><button>Send</button>
+    </form-->
+
+  </body>
+</html>
