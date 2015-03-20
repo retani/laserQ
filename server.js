@@ -1,3 +1,6 @@
+doPlaySound = true
+doSpeak = true
+
 interruptionCounter = null;
 interruptionState = null;
 

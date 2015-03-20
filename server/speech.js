@@ -6,6 +6,7 @@ system = "Alex"
 narrator = "Markus"; //"Anna"
 
 init = function() {
+  if (!doSpeak) return;
   applvol.set(function(){}, 100)
 	say.speak(system, "Ready. Score: " + interruptionCounter + "!" )
 }
@@ -21,6 +22,7 @@ speaking_finishes = function() {
 }
 
 going_on = function(interruptionCounterAtStart){
+  if (!doSpeak) return;
   console.log(interruptionCounterAtStart);
   console.log(interruptionCounter);
   if (interruptionState == 0 && interruptionCounterAtStart == interruptionCounter) {
@@ -30,8 +32,9 @@ going_on = function(interruptionCounterAtStart){
 }
 
 interruption_start = function(){
+  if (!doSpeak) return;
   var interruptionCounterAtStart = interruptionCounter
-  play.sound('./server/audio/82903.wav');
+  if (doPlaySound) play.sound('./server/audio/82903.wav');
   if (!speaking) {
     speaking_starts()
     say.speak(narrator, interruptionCounter + "te Quadratunterbrechung", function(){speaking_finishes(); going_on(interruptionCounterAtStart)});
