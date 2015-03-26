@@ -22,6 +22,7 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
 
       // preprocess
       datapoint.moment = new Date(datapoint.moment)
+      datapoint.timer = 0
 
       // actions
       $scope.datapoint = datapoint

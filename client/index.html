@@ -15,18 +15,23 @@
     <ul id="messages"></ul>
     <ul class="messages datapoints-1" id="datapoints-1" style="float:left; width:30%">
       <li ng-repeat="datapoint in datapoints.slice().reverse() | filter : {state : 1 }">
-        <span>{{::datapoint.moment | date : 'dd.MM.yyyy, HH:mm:ss' }}</span>      
+        <span>{{::datapoint.moment | date : 'dd.MM.yyyy HH:mm:ss' }}</span>      
         <span class="count">{{::datapoint.count}}</span>
-        <span>{{datapoint.timer | number : 3}}</span>
+        <span>{{datapoint.timer | number : 3}}s</span>
       </li>
     </ul>    
     <ul class="messages datapoints-0" id="datapoints-0" style="float:left; width:30%">
       <li ng-repeat="datapoint in datapoints.slice().reverse() | filter : {state : 0 }">
-        <span>{{::datapoint.moment | date : 'dd.MM.yyyy, HH:mm:ss' }}</span>      
+        <span>{{::datapoint.moment | date : 'dd.MM.yyyy HH:mm:ss' }}</span>      
         <span class="count">{{::datapoint.count}}</span>
-        <span>{{datapoint.timer | number : 3}}</span>
+        <span>{{datapoint.timer | number : 3}}s</span>
       </li>
     </ul>
+    <!--ul id="days">
+      <li class="day" ng-repeat="i in [1,2,3,4,5,6,7,8]">
+        {{i}}
+      </li>
+    </ul-->
     <!--div id="full_square_indicator" ng-if="active_datapoint.state==1">
       ▢
     </div-->

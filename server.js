@@ -1,8 +1,10 @@
 doPlaySound = true
 doSpeak = true
+doSpeakIntro = false
 
 interruptionCounter = null;
 interruptionState = null;
+interruptionCounterToday = null;
 
 var util = require('util');
 
@@ -59,6 +61,17 @@ DataPoint.findOne({}).sort({count: -1}).exec( function(err, doc) {
       interruptionCounter = doc.count;
     }
     console.log("current score: " + interruptionCounter);
+    DataPoint.count({"moment": {"$lt": (new Date).setHours(0) }}).exec( function(err, count) {
+        if (count == null) {
+          interruptionCounterToday = 0
+        }
+        else {
+          var score = count / 2
+          console.log(score)
+          interruptionCounterToday = interruptionCounter - score;
+        }
+        console.log("score today: " + (interruptionCounterToday));
+    });    
     speech.init()
 });
 
@@ -79,6 +92,7 @@ serialPort.on("data", function (data) {
   if (incoming.isDataPoint && incoming.count > 0) {
     if (incoming.state == 0){
         interruptionCounter++;
+        interruptionCounterToday++;
         speech.interruption_start();
     }
     if (interruptionState != null) // not the first one
@@ -88,6 +102,7 @@ serialPort.on("data", function (data) {
       }
       else {
         //applvol.fade(function(){}, 0, 1000)
+        //speech.stop()
       }      
     }
     interruptionState = incoming.state
@@ -95,6 +110,7 @@ serialPort.on("data", function (data) {
       state: incoming.state,  
       count: interruptionCounter,
       moment: new Date,
+      countToday: interruptionCounterToday,
     })
     io.emit('datapoint', d);
     console.log(util.inspect(d))
