@@ -13,14 +13,26 @@
   </head>
   <body ng-controller="frontpage">
     <ul id="messages"></ul>
-    <ul id="datapoints"></ul>
+    <ul class="messages datapoints-1" id="datapoints-1" style="float:left; width:30%">
+      <li ng-repeat="datapoint in datapoints.slice().reverse() | filter : {state : 1 }">
+        <span>{{::datapoint.moment | date : 'dd.MM.yyyy, HH:mm:ss' }}</span>      
+        <span class="count">{{::datapoint.count}}</span>
+        <span>{{datapoint.timer | number : 3}}</span>
+      </li>
+    </ul>    
+    <ul class="messages datapoints-0" id="datapoints-0" style="float:left; width:30%">
+      <li ng-repeat="datapoint in datapoints.slice().reverse() | filter : {state : 0 }">
+        <span>{{::datapoint.moment | date : 'dd.MM.yyyy, HH:mm:ss' }}</span>      
+        <span class="count">{{::datapoint.count}}</span>
+        <span>{{datapoint.timer | number : 3}}</span>
+      </li>
+    </ul>
     <!--div id="full_square_indicator" ng-if="active_datapoint.state==1">
       ▢
     </div-->
-    <div id="interruption_count_indicator" class="show_if_interrupted" data-var="interruption_count">
-      x{{test}}
+    <div id="interruption_count_indicator" ng-show="datapoint.state==0">
+      {{datapoint.count}}
     </div>
-    <div>{{active_datapoint.timer}}</div>
     <!--form action="">
       <input id="m" autocomplete="off" /><button>Send</button>
     </form-->

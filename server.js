@@ -11,6 +11,21 @@ var Express = require('express');
 var app = Express();
 var http = require('http').Server(app);
 
+
+/*
+var sassMiddleware = require('node-sass-middleware');
+
+app.use(sassMiddleware({
+    src: require('path').join(__dirname, 'client/sass'),
+    dest: require('path').join(__dirname, 'client/public'),
+    debug: true,
+    force: true,
+    outputStyle: 'compressed',
+    //prefix:  '/prefix'
+}));
+//app.use(Express.static(require('path').join(__dirname, 'public')));
+*/
+
 // set up socket.io
 var io = require('socket.io')(http);
 
@@ -36,9 +51,15 @@ var DataPoint = mongoose.model('DataPoint', {
 
 
 DataPoint.findOne({}).sort({count: -1}).exec( function(err, doc) {
-     interruptionCounter = doc.count;
-     console.log("current score: " + interruptionCounter);
-     speech.init()
+    if (doc == null) {
+      console.log("initializing db")
+      interruptionCounter = 0
+    }
+    else {
+      interruptionCounter = doc.count;
+    }
+    console.log("current score: " + interruptionCounter);
+    speech.init()
 });
 
 
@@ -84,6 +105,14 @@ serialPort.on("data", function (data) {
     });
   }
 });
+
+serialPort.on("open", function () {
+  console.log("serial connection established")
+})
+
+serialPort.on("close", function () {
+  console.log("!!! serial connection lost !!!")
+})
 
 var serial = require('./server/serial.js');
 

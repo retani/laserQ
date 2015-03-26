@@ -1,56 +1,55 @@
 
 var app = angular.module('App', []);
 
-angular.module('App').controller('frontpage', function($scope)  {
+angular.module('App').controller('frontpage', ['$scope', '$interval',
+      function($scope, $interval) {
 
   $scope.test = "test"
   $scope.datapoints = []
 
+  $scope.timer = 1000
+  $scope.interrupted = false
+
   test  = $scope.test
+
+  // incoming data
   socket.on('datapoint', function(datapoint){
-    
+    $scope.$apply(function() {
 
-    console.log("received: " + datapoint)
+      stopTimer()
 
-    // preprocess
-    datapoint.moment = new Date(datapoint.moment)
+      console.log("received: " + datapoint)
 
-    // actions
-    $scope.active_datapoint = datapoint    
+      // preprocess
+      datapoint.moment = new Date(datapoint.moment)
 
-    if (datapoint.state == 1) {
-      $(".show_if_not_interrupted").show();
-      $(".show_if_interrupted").hide();
-    }
-    else {
-      $(".show_if_not_interrupted").hide();
-      $(".show_if_interrupted").show();
-    }
-    
-    $("[data-var=interruption_count]").text(datapoint.count)
+      // actions
+      $scope.datapoint = datapoint
 
-    if (datapoint.state == 0) {
-      $scope.active_datapoint.timer = 0;
-      interruptionTimer = setInterval( function() {
-        //active_datapoint.timer = active_datapoint.moment
-         $scope.active_datapoint.timer+= 100;
-         $scope.apply()
-      }, 100)
-    }
-    else {
-      clearInterval(interruptionTimer)
-      datapoint.timer = $scope.active_datapoint.timer;
-    }
+      //$('#datapoints').prepend($('<li>').html(datapoint.moment + " <b>" + datapoint.count + "</b> " + datapoint.state +  " " + datapoint.timer)); 
 
-    $('#datapoints').prepend($('<li>').html(datapoint.moment + " <b>" + datapoint.count + "</b> " + datapoint.state +  " " + datapoint.timer)); 
+      $scope.datapoints.push(datapoint)
 
-    $scope.datapoints.push(datapoint)
+      startTimer()
 
-    $scope.$apply();
-
+    });
   });  
 
-});
+  // timer functions
+  startTimer = function() {
+    $scope.timer = 0;
+    interruptionTimer = $interval( function() {
+        $scope.timer += 0.03;
+        $scope.datapoint.timer = $scope.timer
+    }, 30)
+  }
+
+  stopTimer = function() {
+    if (typeof interruptionTimer != "undefined")
+    $interval.cancel(interruptionTimer)
+  }
+
+}]);
 
 /************ OTHER **********/
 
