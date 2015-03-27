@@ -17,6 +17,7 @@
       <li ng-repeat="datapoint in datapoints.slice().reverse() | filter : {state : 1 }">
         <span>{{::datapoint.moment | date : 'dd.MM.yyyy HH:mm:ss' }}</span>      
         <span class="count">{{::datapoint.count}}</span>
+        <span class="countToday">{{::datapoint.countToday}}</span>
         <span>{{datapoint.timer | number : 3}}s</span>
       </li>
     </ul>    
@@ -24,6 +25,7 @@
       <li ng-repeat="datapoint in datapoints.slice().reverse() | filter : {state : 0 }">
         <span>{{::datapoint.moment | date : 'dd.MM.yyyy HH:mm:ss' }}</span>      
         <span class="count">{{::datapoint.count}}</span>
+        <span class="countToday">{{::datapoint.countToday}}</span>
         <span>{{datapoint.timer | number : 3}}s</span>
       </li>
     </ul>

@@ -1,4 +1,4 @@
-doPlaySound = true
+doPlaySound = false
 doSpeak = true
 doSpeakIntro = false
 
@@ -68,7 +68,7 @@ DataPoint.findOne({}).sort({count: -1}).exec( function(err, doc) {
         else {
           var score = count / 2
           console.log(score)
-          interruptionCounterToday = interruptionCounter - score;
+          interruptionCounterToday = interruptionCounter - score + 6; // wtf
         }
         console.log("score today: " + (interruptionCounterToday));
     });    
