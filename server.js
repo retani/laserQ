@@ -81,44 +81,17 @@ var Serialport = require("serialport")
 var SerialPort = Serialport.SerialPort
 var serialPort = new SerialPort("/dev/tty.usbserial-A9005baS", {
   baudrate: 57600,
-  parser: Serialport.parsers.readline("\r\n")
-});
-
+  parser: Serialport.parsers.readline("\r\n"),
+}, true, function(err) {
+    console.log(err)
+  });
 
 serialPort.on("data", function (data) {
   console.log(data);
   io.emit('raw', data);
   var incoming = serial.parse(data)
   if (incoming.isDataPoint && incoming.count > 0) {
-    if (incoming.state == 0){
-        interruptionCounter++;
-        interruptionCounterToday++;
-        speech.interruption_start();
-    }
-    if (interruptionState != null) // not the first one
-    {
-      if (incoming.state == 0) {
-        //applvol.set(function(){}, 100)
-      }
-      else {
-        //applvol.fade(function(){}, 0, 1000)
-        //speech.stop()
-      }      
-    }
-    interruptionState = incoming.state
-    var d = new DataPoint({ 
-      state: incoming.state,  
-      count: interruptionCounter,
-      moment: new Date,
-      countToday: interruptionCounterToday,
-    })
-    io.emit('datapoint', d);
-    console.log(util.inspect(d))
-    d.save(function (err) {
-      if (err) // ...
-      console.log('meow');
-      console.log('saved');
-    });
+    processIncomingDataPoint(incoming)
   }
 });
 
@@ -129,6 +102,38 @@ serialPort.on("open", function () {
 serialPort.on("close", function () {
   console.log("!!! serial connection lost !!!")
 })
+
+processIncomingDataPoint = function(incoming) {
+  if (incoming.state == 0){
+      interruptionCounter++;
+      interruptionCounterToday++;
+      speech.interruption_start();
+  }
+  if (interruptionState != null) // not the first one
+  {
+    if (incoming.state == 0) {
+      //applvol.set(function(){}, 100)
+    }
+    else {
+      //applvol.fade(function(){}, 0, 1000)
+      //speech.stop()
+    }      
+  }
+  interruptionState = incoming.state
+  var d = new DataPoint({ 
+    state: incoming.state,  
+    count: interruptionCounter,
+    moment: new Date,
+    countToday: interruptionCounterToday,
+  })
+  io.emit('datapoint', d);
+  console.log(util.inspect(d))
+  d.save(function (err) {
+    if (err) // ...
+    console.log('meow');
+    console.log('saved');
+  });  
+}
 
 var serial = require('./server/serial.js');
 
@@ -145,6 +150,10 @@ app.get('/', function(req, res){
 io.on('connection', function(socket){
   console.log('a user connected');
   io.emit('system', 'welcome new observer');
+    socket.on("simulateIncomingDataPoint", function (incoming) {
+    console.log("received simulation")
+    processIncomingDataPoint(incoming)
+  });
 });
 
 

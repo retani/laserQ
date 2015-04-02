@@ -50,10 +50,28 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
     $interval.cancel(interruptionTimer)
   }
 
+  $( "body" ).keypress(function( event ) {
+    if ( event.which == 49 ) {
+      console.log("simulate 1")
+       socket.emit("simulateIncomingDataPoint",{ 
+        state : 1, 
+        count: 1,
+        isDataPoint : true
+      })
+     }
+    if ( event.which == 48 ) {
+      console.log("simulate 0")
+       socket.emit("simulateIncomingDataPoint",{ 
+        state : 0, 
+        count : 1,
+        isDataPoint : true
+      })       
+     }
+    });
+
 }]);
 
 /************ OTHER **********/
-
 
 
 var active_datapoint;
