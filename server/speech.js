@@ -44,8 +44,17 @@ interruption_start = function(){
   var interruptionCounterAtStart = interruptionCounter
   if (doPlaySound) play.sound('./server/audio/82903.wav');
   if (!speaking) {
+    texts = [ 
+      interruptionCounter + "te Quadratunterbrechung", 
+      interruptionCounter, 
+      interruptionCounter + "!",
+      interruptionCounter + "?",
+      interruptionCounter + "?",
+      interruptionCounter + "te"
+      ]
+    text = texts[[Math.floor(Math.random() * texts.length)]]
     speaking_starts()
-    say.speak(narrator, interruptionCounter + "te Quadratunterbrechung", function(){speaking_finishes(); going_on(interruptionCounterAtStart)});
+    say.speak(narrator, text, function(){speaking_finishes(); going_on(interruptionCounterAtStart)});
   }
 }
 
