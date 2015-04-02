@@ -124,7 +124,6 @@ processIncomingDataPoint = function(incoming) {
     state: incoming.state,  
     count: interruptionCounter,
     moment: new Date,
-    countToday: interruptionCounterToday,
   })
   io.emit('datapoint', d);
   console.log(util.inspect(d))
@@ -154,6 +153,10 @@ io.on('connection', function(socket){
     console.log("received simulation")
     processIncomingDataPoint(incoming)
   });
+  DataPoint.find({}, function(err, datapoints) {
+    console.log("sending " + datapoints.length + " historical datapoints to display")
+    socket.emit('init', { datapoints:datapoints, interruptionCounterTodayOffset:(interruptionCounter-interruptionCounterToday)});
+  })
 });
 
 
