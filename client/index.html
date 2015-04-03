@@ -19,15 +19,15 @@
           <li ng-repeat="datapoint in datapoints.slice().reverse() | filter : {state : 1 } | limitTo:50">
             <span>{{::datapoint.moment | date : 'dd.MM.yyyy HH:mm:ss' }}</span>      
             <span class="count">{{::datapoint.count}}</span>
-            <span class="countToday">({{datapoint.count - interruptionCounterTodayOffset}})</span>
+            <span class="countToday">{{::datapoint.count - interruptionCounterTodayOffset}}</span>
             <span>{{datapoint.timer | readableTime }}</span>
           </li>
-        </ul>    
+        </ul>
         <ul class="messages datapoints-0" id="datapoints-0">
-          <li ng-repeat="datapoint in datapoints.slice().reverse() | filter : {state : 0 } | limitTo:50 ">
+          <li ng-repeat="datapoint in datapoints.slice().reverse() | filter : {state : 0 } | limitTo:50 " ng-class="{over1s : timer > 1.0}">
             <span>{{::datapoint.moment | date : 'dd.MM.yyyy HH:mm:ss' }}</span>      
             <span class="count">{{::datapoint.count}}</span>
-            <span class="countToday">{{::datapoint.countToday}}</span>
+            <span class="countToday">{{::datapoint.count - interruptionCounterTodayOffset}}</span>
             <span>{{datapoint.timer | readableTime }}</span>
           </li>
         </ul>
@@ -43,9 +43,15 @@
       <div id="interruption_count_indicator" ng-show="datapoint.state==0">
         {{datapoint.count}}
       </div>
-      <div id="total">
+      <!--div id="total">
         {{totalClosed}} / {{totalInterrupted}}
-      </div>      
+      </div-->      
+      <div id="clock">
+        <p>{{ clock  | date:'dd.MM.yyyy HH:mm:ss'}}</p>
+      </div>        
+      <!--div id="timer">
+        <p>{{ timer  | number:3 }}</p>
+      </div-->              
       <!--form action="">
         <input id="m" autocomplete="off" /><button>Send</button>
       </form-->
