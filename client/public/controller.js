@@ -23,6 +23,14 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
     [new Date(2015,3,10,16),new Date(2015,3,10,22)],
   ]
 
+  $scope.dates.forEach(function(dateInterval, i){
+    if (Date.now() >= dateInterval[0] && Date.now() <= dateInterval[1]) {
+      $scope.currentDateNumber = i
+    }
+  })
+
+  console.log("Today is the " + (1+$scope.currentDateNumber) + ". day")
+
   $scope.dailyStats = []
   $scope.totalStats = {}
   $scope.twoMinStats = []
@@ -75,6 +83,7 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
         }
       }
       // calculate stats
+      console.log("start calc")
       $scope.totalStats.sumClosed = 0
       $scope.totalStats.sumInterrupted = 0      
       $scope.dates.forEach(function(dateInterval) {
@@ -82,7 +91,7 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
         var sumInterrupted = 0
         var twoMinIterator = 0
         var tmptwoMinStats = []
-        console.log("BEGIN INTERVAL " + dateInterval[0] + " - " + dateInterval[1])
+        //console.log("BEGIN INTERVAL " + dateInterval[0] + " - " + dateInterval[1])
         for (i = 0; i < datapoints.length-1; i++) {
           if (datapoints[i].state != datapoints[i+1].state) { // validate
             if (datapoints[i].moment >=  dateInterval[0] && datapoints[i+1].moment <= dateInterval[1]) { // choose range
@@ -90,11 +99,11 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
               twoMinStart = new Date(dateInterval[0].getTime() + twoMinIterator*2*60*1000)
               twoMinEnd = new Date(dateInterval[0].getTime() + twoMinIterator*(2+2)*60*1000)
               tmptwoMinStats[twoMinIterator] = 0
-              if (sumClosed<100) {
+              if (sumClosed<100) {/*
                 console.log("INTERVAL " + dateInterval[0] + " - " + dateInterval[1])              
                 console.log("example datapoint: " + datapoints[i].moment)      
                 console.log("3 min iterator :" + twoMinIterator)
-                console.log("3 min interval start: " + twoMinStart)
+                console.log("3 min interval start: " + twoMinStart)*/
               }
               if (datapoints[i].timer != undefined && datapoints[i].timer < 60*60) {
                 if (datapoints[i].state == 1) {
@@ -121,7 +130,6 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
           }
         }
         $scope.twoMinStats.push(tmptwoMinStats)
-        console.log(tmptwoMinStats)
         $scope.dailyStats.push({
           start: dateInterval[0],
           end: dateInterval[1],
@@ -132,6 +140,7 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
         $scope.totalStats.sumClosed += sumClosed
         $scope.totalStats.sumInterrupted += sumInterrupted
       })
+      console.log("end calc")
       /*
       for (i = 0; i < datapoints.length; i++) {
         console.log(datapoints[i].moment.getHours())
@@ -145,14 +154,7 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
       */
 
       for (i = 0; i < $(".canvas").length; i++) {
-        console.log("drawin canvas #"+i)
-        var ctx = $(".canvas").get(i).getContext("2d")
-        ctx.fillStyle = "rgb(200,0,0)";
-        $scope.twoMinStats[i].forEach(function(y, x){
-          y = Math.floor(y)
-          console.log(x + " " + y)
-          ctx.fillRect (x, 0, 1, y);
-        })
+        draw_canvas(i)
       }
 
       $scope.datapoints = $scope.datapoints.concat(datapoints)
@@ -161,30 +163,47 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
 
   // charts
 
-  $scope.labels = ["16", "17", "18", "19", "20", "21", "July"];
-  $scope.series = ["datapoints"];
-  $scope.data = [[28, 48, 40, 19, 86, 27, 90]];
-
-  init = function() {
-
+  draw_canvas = function(i) {
+    console.log("drawin canvas #"+i)
+    var ctx = $(".canvas").get(i).getContext("2d")
+    ctx.fillStyle = "rgb(200,0,0)";
+    $scope.twoMinStats[i].forEach(function(y, x){
+      y = Math.floor(y)
+      //console.log(x + " " + y)
+      ctx.fillRect (x, 0, 1, Math.floor(y*1.5));
+    })
   }
 
+
   // timer functions
+
+  var lastUpdate;
+
   startTimer = function() {
+    lastUpdate = Date.now()
     $scope.timerStart = Date.now()
     $scope.timer = 0;
-    interruptionTimer = $interval( function() {
-        $scope.timer = (Date.now() - $scope.timerStart)/1000;
-        $scope.datapoint.timer = $scope.timer
-    }, 30)
+    interruptionTimer = $interval( updater, 30)
   }
 
   stopTimer = function() {
     if (typeof interruptionTimer != "undefined")
     {
       $interval.cancel(interruptionTimer)
-      $scope.timer = (Date.now() - $scope.timerStart)/1000;
+      updater()
     }
+  }
+
+  updater = function() {
+      $scope.timer = (Date.now() - $scope.timerStart)/1000;
+      $scope.datapoint.timer = $scope.timer
+      if ($scope.datapoint.state == 0) {
+        var i = $scope.currentDateNumber
+        x = Math.floor((lastUpdate - $scope.dates[i][0]) / (1000*60*2))
+        $scope.twoMinStats[i][x] += (Date.now()-lastUpdate)/1000
+        draw_canvas(i)
+      }
+      lastUpdate = Date.now()
   }
 
   $( "body" ).keypress(function( event ) {
