@@ -82,19 +82,19 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
         var sumInterrupted = 0
         var threeMinIterator = 0
         var tmpThreeMinStats = []
+        console.log("BEGIN INTERVAL " + dateInterval[0] + " - " + dateInterval[1])
         for (i = 0; i < datapoints.length-1; i++) {
           if (datapoints[i].state != datapoints[i+1].state) { // validate
             if (datapoints[i].moment >=  dateInterval[0] && datapoints[i+1].moment <= dateInterval[1]) { // choose range
-              threeMinIterator = Math.floor((datapoints[i].moment.getTime() - dateInterval[0].getTime()) / (1000*60*3))
-              threeMinStart = dateInterval[0].setMinutes(threeMinIterator*3)
-              threeMinEnd = dateInterval[0].setSeconds(threeMinIterator*3+3)
+              threeMinIterator = Math.floor((datapoints[i].moment - dateInterval[0]) / (1000*60*3))
+              threeMinStart = new Date(dateInterval[0].getTime() + threeMinIterator*3*60*1000)
+              threeMinEnd = new Date(dateInterval[0].getTime() + threeMinIterator*(3+3)*60*1000)
               tmpThreeMinStats[threeMinIterator] = 0
-              if (sumClosed<100) {/*
-                console.log("INTERVAL")
-                console.log(dateInterval[0])
-                console.log(datapoints[i].moment)      
-                //console.log((datapoints[i].moment.getTime() - dateInterval[0].getTime()) / (1000*60*3))
-                console.log(threeMinStart)*/
+              if (sumClosed<100) {
+                console.log("INTERVAL " + dateInterval[0] + " - " + dateInterval[1])              
+                console.log("example datapoint: " + datapoints[i].moment)      
+                console.log("3 min iterator :" + threeMinIterator)
+                console.log("3 min interval start: " + threeMinStart)
               }
               if (datapoints[i].timer != undefined && datapoints[i].timer < 60*60) {
                 if (datapoints[i].state == 1) {
