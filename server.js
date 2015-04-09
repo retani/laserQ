@@ -151,12 +151,12 @@ app.get('/', function(req, res){
 io.on('connection', function(socket){
   console.log('a user connected');
   io.emit('system', 'welcome new observer');
-  /*
+  
   socket.on("simulateIncomingDataPoint", function (incoming) {
     console.log("received simulation")
     processIncomingDataPoint(incoming)
   });
-  */
+  
   socket.on("key", function (i) {
     console.log("switching voice")
     if (!doSpeak) info = "okay."

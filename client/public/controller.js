@@ -156,6 +156,7 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
       for (i = 0; i < $(".canvas").length; i++) {
         draw_canvas(i)
       }
+      $interval(function(){draw_canvas($scope.currentDateNumber)}, 1000)
 
       $scope.datapoints = $scope.datapoints.concat(datapoints)
     })
@@ -183,7 +184,7 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
     lastUpdate = Date.now()
     $scope.timerStart = Date.now()
     $scope.timer = 0;
-    interruptionTimer = $interval( updater, 30)
+    interruptionTimer = $interval( updater, 34)
   }
 
   stopTimer = function() {
@@ -200,8 +201,9 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
       if ($scope.datapoint.state == 0) {
         var i = $scope.currentDateNumber
         x = Math.floor((lastUpdate - $scope.dates[i][0]) / (1000*60*2))
+        if ($scope.twoMinStats[i][x] == undefined) $scope.twoMinStats[i][x] = 0
+        //console.log("updating " + x + " from " + $scope.twoMinStats[i][x] + " by " + (Date.now()-lastUpdate)/1000 )
         $scope.twoMinStats[i][x] += (Date.now()-lastUpdate)/1000
-        draw_canvas(i)
       }
       lastUpdate = Date.now()
   }
@@ -281,7 +283,7 @@ socket.on('raw', function(msg){
         default:
           return format(Math.floor(seconds / year), 'year');
       }*/
-      return Math.floor(seconds / hour) + ":" + Math.floor(seconds % minute) + ":" + Math.floor(seconds % 60) +  "." + Math.floor(1000*(milliseconds/1000 - Math.floor(milliseconds/1000))) 
+      return Math.floor(seconds / hour) + ":" + Math.floor(seconds/minute % minute) + ":" + Math.floor(seconds % minute) +  "." + Math.floor(1000*(milliseconds/1000 - Math.floor(milliseconds/1000))) 
     };
   });
 
