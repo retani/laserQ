@@ -28,6 +28,12 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
 
   test  = $scope.test
 
+
+  $interval( function() {
+    $scope.clock = Date.now()
+  }, 1000)
+  
+
   // incoming data
   socket.on('datapoint', function(datapoint){
     $scope.$apply(function() {
@@ -64,7 +70,7 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
       }      
       if (datapoints.length > 1) {
         for (i = 1; i < datapoints.length; i++) {
-          datapoints[i].timer = (datapoints[i].moment.getTime() - datapoints[i-1].moment.getTime()) / 1000
+          datapoints[i].timer = (datapoints[i].moment.getTime() - datapoints[i-1].moment.getTime())/1000
         }
       }
       // calculate stats
@@ -101,13 +107,13 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
       /*
       for (i = 0; i < datapoints.length; i++) {
         console.log(datapoints[i].moment.getHours())
-        if (datapoints[i].timer < 3600 && datapoints[i].moment.getHours() < 22 && datapoints[i].moment.getHours() >= 10) {
+        if (datapoints[i].timer < 3600 && datapoints[i].moment.getHours() < 22 && datapoints[i].moment.getHours() >= 16) {
           if (datapoints[i].state == 1)
             $scope.totalClosed += datapoints[i].timer
           else
             $scope.totalInterrupted += datapoints[i].timer
         }
-      }
+      }            
       */
       $scope.datapoints = $scope.datapoints.concat(datapoints)
     })
@@ -119,16 +125,20 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
 
   // timer functions
   startTimer = function() {
+    $scope.timerStart = Date.now()
     $scope.timer = 0;
     interruptionTimer = $interval( function() {
-        $scope.timer += 0.03;
+        $scope.timer = (Date.now() - $scope.timerStart)/1000;
         $scope.datapoint.timer = $scope.timer
     }, 30)
   }
 
   stopTimer = function() {
     if (typeof interruptionTimer != "undefined")
-    $interval.cancel(interruptionTimer)
+    {
+      $interval.cancel(interruptionTimer)
+      $scope.timer = (Date.now() - $scope.timerStart)/1000;
+    }
   }
 
   $( "body" ).keypress(function( event ) {
@@ -148,6 +158,11 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
         isDataPoint : true
       })       
      }
+    if ( event.which == 32 ) {
+      console.log("toggle voice")
+       socket.emit("key",{ 
+      })       
+     }     
     });
 
 }]);
@@ -182,7 +197,7 @@ socket.on('raw', function(msg){
       format = function(number, string) {
         string = number === 1 ? string : "" + string + "s";
         return "" + number + " " + string;
-      };
+      };/*
       switch (false) {
         case !(milliseconds < 1000):
           return format(milliseconds, 'millisecond');
@@ -200,7 +215,8 @@ socket.on('raw', function(msg){
           return format(Math.floor(seconds / month), 'month');
         default:
           return format(Math.floor(seconds / year), 'year');
-      }
+      }*/
+      return Math.floor(seconds / hour) + ":" + Math.floor(seconds / minute) + ":" + Math.floor(seconds) +  "." + Math.floor(1000*(milliseconds/1000 - Math.floor(milliseconds/1000))) 
     };
   });
 

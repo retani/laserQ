@@ -4,7 +4,7 @@ var applvol = require('osx-wifi-volume-remote')
 //var ps = require('ps.js');
 
 system = "Alex"
-narrator = "Markus"; //"Anna"
+narrator = "Anna"; //"Markus"
 
 init = function() {
   if (!doSpeak) return;

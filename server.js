@@ -1,5 +1,5 @@
 doPlaySound = false
-doSpeak = true
+doSpeak = false
 doSpeakIntro = false
 
 interruptionCounter = null;
@@ -154,7 +154,13 @@ io.on('connection', function(socket){
     console.log("received simulation")
     processIncomingDataPoint(incoming)
   });
-  */
+  socket.on("key", function (i) {
+    console.log("switching voice")
+    if (!doSpeak) info = "okay."
+    else info = "i will keep quiet now."
+    say.speak(system, info)
+    doSpeak = !doSpeak
+  });    
   DataPoint.find({}, function(err, datapoints) {
     console.log("sending " + datapoints.length + " historical datapoints to display")
     socket.emit('init', { datapoints:datapoints, interruptionCounterTodayOffset:(interruptionCounter-interruptionCounterToday)});
