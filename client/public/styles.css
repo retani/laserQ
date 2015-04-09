@@ -133,5 +133,6 @@ body.interrupted #frame {
 #days .day .date {
   padding:0.5em;
   position: absolute;
+  font-weight: bold;
 }
 

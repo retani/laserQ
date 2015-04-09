@@ -1,5 +1,5 @@
 doPlaySound = false
-doSpeak = false
+doSpeak = true
 doSpeakIntro = false
 
 interruptionCounter = null;
