@@ -35,7 +35,8 @@
       </div>
       <ul id="days">
         <li class="day" ng-repeat="d in dates">
-          {{d | date : 'dd.MM.yyyy' }}
+          <span class="date">{{d[0] | date : 'dd.MM.yyyy' }}</span>
+          <canvas class="canvas" width="180" height="180"></canvas>
         </li>
       </ul>
       <!--div id="full_square_indicator" ng-if="active_datapoint.state==1">
