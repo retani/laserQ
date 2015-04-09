@@ -25,7 +25,7 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
 
   $scope.dailyStats = []
   $scope.totalStats = {}
-  $scope.threeMinStats = []
+  $scope.twoMinStats = []
 
   test  = $scope.test
 
@@ -80,39 +80,39 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
       $scope.dates.forEach(function(dateInterval) {
         var sumClosed = 0
         var sumInterrupted = 0
-        var threeMinIterator = 0
-        var tmpThreeMinStats = []
+        var twoMinIterator = 0
+        var tmptwoMinStats = []
         console.log("BEGIN INTERVAL " + dateInterval[0] + " - " + dateInterval[1])
         for (i = 0; i < datapoints.length-1; i++) {
           if (datapoints[i].state != datapoints[i+1].state) { // validate
             if (datapoints[i].moment >=  dateInterval[0] && datapoints[i+1].moment <= dateInterval[1]) { // choose range
-              threeMinIterator = Math.floor((datapoints[i].moment - dateInterval[0]) / (1000*60*3))
-              threeMinStart = new Date(dateInterval[0].getTime() + threeMinIterator*3*60*1000)
-              threeMinEnd = new Date(dateInterval[0].getTime() + threeMinIterator*(3+3)*60*1000)
-              tmpThreeMinStats[threeMinIterator] = 0
+              twoMinIterator = Math.floor((datapoints[i].moment - dateInterval[0]) / (1000*60*2))
+              twoMinStart = new Date(dateInterval[0].getTime() + twoMinIterator*2*60*1000)
+              twoMinEnd = new Date(dateInterval[0].getTime() + twoMinIterator*(2+2)*60*1000)
+              tmptwoMinStats[twoMinIterator] = 0
               if (sumClosed<100) {
                 console.log("INTERVAL " + dateInterval[0] + " - " + dateInterval[1])              
                 console.log("example datapoint: " + datapoints[i].moment)      
-                console.log("3 min iterator :" + threeMinIterator)
-                console.log("3 min interval start: " + threeMinStart)
+                console.log("3 min iterator :" + twoMinIterator)
+                console.log("3 min interval start: " + twoMinStart)
               }
               if (datapoints[i].timer != undefined && datapoints[i].timer < 60*60) {
                 if (datapoints[i].state == 1) {
                   sumClosed += datapoints[i].timer
-                  if (datapoints[i].moment >=  threeMinStart && datapoints[i+1].moment <= threeMinEnd) {
-                    if (tmpThreeMinStats[threeMinIterator] == 0){
-                      tmpThreeMinStats[threeMinIterator] += (datapoints[i].moment - threeMinStart) / 1000
+                  if (datapoints[i].moment >=  twoMinStart && datapoints[i+1].moment <= twoMinEnd) {
+                    if (tmptwoMinStats[twoMinIterator] == 0){
+                      tmptwoMinStats[twoMinIterator] += (datapoints[i].moment - twoMinStart) / 1000
                     }
                   }                    
                 }
                 else {
                   sumInterrupted += datapoints[i].timer
-                  if (datapoints[i].moment >=  threeMinStart && datapoints[i+1].moment <= threeMinEnd) {
-                    if ( datapoints[i+1].moment > threeMinEnd){
-                      tmpThreeMinStats[threeMinIterator] += (threeMinEnd - datapoints[i+1].moment) / 1000
+                  if (datapoints[i].moment >=  twoMinStart && datapoints[i+1].moment <= twoMinEnd) {
+                    if ( datapoints[i+1].moment > twoMinEnd){
+                      tmptwoMinStats[twoMinIterator] += (twoMinEnd - datapoints[i+1].moment) / 1000
                     }
                     else {
-                      tmpThreeMinStats[threeMinIterator] += datapoints[i].timer / 1000 
+                      tmptwoMinStats[twoMinIterator] += datapoints[i].timer / 1000 
                     }
                   }                  
                 }
@@ -120,8 +120,8 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
             }
           }
         }
-        $scope.threeMinStats.push(tmpThreeMinStats)
-        console.log(tmpThreeMinStats)
+        $scope.twoMinStats.push(tmptwoMinStats)
+        console.log(tmptwoMinStats)
         $scope.dailyStats.push({
           start: dateInterval[0],
           end: dateInterval[1],
@@ -148,7 +148,7 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
         console.log("drawin canvas #"+i)
         var ctx = $(".canvas").get(i).getContext("2d")
         ctx.fillStyle = "rgb(200,0,0)";
-        $scope.threeMinStats[i].forEach(function(y, x){
+        $scope.twoMinStats[i].forEach(function(y, x){
           y = Math.floor(y)
           console.log(x + " " + y)
           ctx.fillRect (x, 0, 1, y);
