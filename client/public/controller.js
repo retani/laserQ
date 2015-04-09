@@ -143,6 +143,18 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
         }
       }            
       */
+
+      for (i = 0; i < $(".canvas").length; i++) {
+        console.log("drawin canvas #"+i)
+        var ctx = $(".canvas").get(i).getContext("2d")
+        ctx.fillStyle = "rgb(200,0,0)";
+        $scope.threeMinStats[i].forEach(function(y, x){
+          y = Math.floor(y)
+          console.log(x + " " + y)
+          ctx.fillRect (x, 0, 1, y);
+        })
+      }
+
       $scope.datapoints = $scope.datapoints.concat(datapoints)
     })
   })
