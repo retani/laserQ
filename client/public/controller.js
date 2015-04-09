@@ -15,12 +15,12 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
   $scope.dates = [
     [new Date(2015,2,19,16),new Date(2015,2,19,22)],
     [new Date(2015,2,20,16),new Date(2015,2,20,22)],
+    [new Date(2015,2,26,16),new Date(2015,2,26,22)],
     [new Date(2015,2,27,16),new Date(2015,2,27,22)],
-    [new Date(2015,2,28,16),new Date(2015,2,28,22)],
     [new Date(2015,3,2,16), new Date(2015,3,2,22)],
     [new Date(2015,3,3,16), new Date(2015,3,3,22)],
+    [new Date(2015,3,9,16),new Date(2015,3,9,22)],
     [new Date(2015,3,10,16),new Date(2015,3,10,22)],
-    [new Date(2015,3,11,16),new Date(2015,3,10,22)],
   ]
 
   $scope.dailyStats = []
