@@ -13,15 +13,18 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
   $scope.totalInterrupted = 0
 
   $scope.dates = [
-    new Date(2015,3,19),
-    new Date(2015,3,20),
-    new Date(2015,3,27),
-    new Date(2015,3,28),
-    new Date(2015,4,2),
-    new Date(2015,4,3),
-    new Date(2015,4,10),
-    new Date(2015,4,11)
+    [new Date(2015,2,19,16),new Date(2015,2,19,22)],
+    [new Date(2015,2,20,16),new Date(2015,2,20,22)],
+    [new Date(2015,2,27,16),new Date(2015,2,27,22)],
+    [new Date(2015,2,28,16),new Date(2015,2,28,22)],
+    [new Date(2015,3,2,16), new Date(2015,3,2,22)],
+    [new Date(2015,3,3,16), new Date(2015,3,3,22)],
+    [new Date(2015,3,10,16),new Date(2015,3,10,22)],
+    [new Date(2015,3,11,16),new Date(2015,3,10,22)],
   ]
+
+  $scope.dailyStats = []
+  $scope.totalStats = {}
 
   test  = $scope.test
 
@@ -61,9 +64,41 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
       }      
       if (datapoints.length > 1) {
         for (i = 1; i < datapoints.length; i++) {
-          datapoints[i].timer = datapoints[i].moment.getTime() - datapoints[i-1].moment.getTime()
+          datapoints[i].timer = (datapoints[i].moment.getTime() - datapoints[i-1].moment.getTime()) / 1000
         }
       }
+      // calculate stats
+      $scope.totalStats.sumClosed = 0
+      $scope.totalStats.sumInterrupted = 0      
+      $scope.dates.forEach(function(dateInterval) {
+        var sumClosed = 0
+        var sumInterrupted = 0
+        for (i = 0; i < datapoints.length-1; i++) {
+          if (datapoints[i].state != datapoints[i+1].state) { // validate
+            /*
+            console.log(datapoints[i].moment)
+            console.log(dateInterval[0])
+            console.log(datapoints[i+1].moment)
+            console.log(dateInterval[1])
+            return
+            */
+            if (datapoints[i].moment >=  dateInterval[0] && datapoints[i+1].moment <= dateInterval[1]) { // choose range
+              if (datapoints[i].state == 1) sumClosed += datapoints[i].timer
+              else sumInterrupted += datapoints[i].timer
+            }
+          }
+        }
+        $scope.dailyStats.push({
+          start: dateInterval[0],
+          end: dateInterval[1],
+          sumClosed: sumClosed,
+          sumInterrupted: sumInterrupted,
+        })
+        console.log(sumClosed + " " + sumInterrupted)
+        $scope.totalStats.sumClosed += sumClosed
+        $scope.totalStats.sumInterrupted += sumInterrupted
+      })
+      /*
       for (i = 0; i < datapoints.length; i++) {
         console.log(datapoints[i].moment.getHours())
         if (datapoints[i].timer < 3600 && datapoints[i].moment.getHours() < 22 && datapoints[i].moment.getHours() >= 10) {
@@ -72,7 +107,8 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
           else
             $scope.totalInterrupted += datapoints[i].timer
         }
-      }            
+      }
+      */
       $scope.datapoints = $scope.datapoints.concat(datapoints)
     })
   })

@@ -61,14 +61,14 @@ DataPoint.findOne({}).sort({count: -1}).exec( function(err, doc) {
       interruptionCounter = doc.count;
     }
     console.log("current score: " + interruptionCounter);
-    DataPoint.count({"moment": {"$lt": (new Date).setHours(0) }}).exec( function(err, count) {
-        if (count == null) {
+    DataPoint.findOne({"moment": {"$lt": (new Date).setHours(0) }}).sort({count: -1}).exec( function(err, doc) {
+        if (doc.count == null) {
           interruptionCounterToday = 0
         }
         else {
-          var score = count / 2
+          var score = doc.count
           console.log(score)
-          interruptionCounterToday = interruptionCounter - score + 6; // wtf
+          interruptionCounterToday = interruptionCounter - score;
         }
         console.log("score today: " + (interruptionCounterToday));
     });    
@@ -149,10 +149,12 @@ app.get('/', function(req, res){
 io.on('connection', function(socket){
   console.log('a user connected');
   io.emit('system', 'welcome new observer');
-    socket.on("simulateIncomingDataPoint", function (incoming) {
+  /*
+  socket.on("simulateIncomingDataPoint", function (incoming) {
     console.log("received simulation")
     processIncomingDataPoint(incoming)
   });
+  */
   DataPoint.find({}, function(err, datapoints) {
     console.log("sending " + datapoints.length + " historical datapoints to display")
     socket.emit('init', { datapoints:datapoints, interruptionCounterTodayOffset:(interruptionCounter-interruptionCounterToday)});
