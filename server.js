@@ -140,6 +140,8 @@ var serial = require('./server/serial.js');
 
 app.use("/public", Express.static(require('path').join(__dirname, 'client/public')));
 app.use('/angular', Express.static(require('path').join(__dirname, 'node_modules/angular/')));
+app.use('/angular-chart', Express.static(require('path').join(__dirname, 'bower_components/angular-chart.js/dist/')));
+app.use('/Chart', Express.static(require('path').join(__dirname, 'bower_components/Chart.js/')));
 
 // express server home page
 app.get('/', function(req, res){
@@ -154,6 +156,7 @@ io.on('connection', function(socket){
     console.log("received simulation")
     processIncomingDataPoint(incoming)
   });
+  */
   socket.on("key", function (i) {
     console.log("switching voice")
     if (!doSpeak) info = "okay."

@@ -25,6 +25,7 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
 
   $scope.dailyStats = []
   $scope.totalStats = {}
+  $scope.threeMinStats = []
 
   test  = $scope.test
 
@@ -79,21 +80,48 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
       $scope.dates.forEach(function(dateInterval) {
         var sumClosed = 0
         var sumInterrupted = 0
+        var threeMinIterator = 0
+        var tmpThreeMinStats = []
         for (i = 0; i < datapoints.length-1; i++) {
           if (datapoints[i].state != datapoints[i+1].state) { // validate
-            /*
-            console.log(datapoints[i].moment)
-            console.log(dateInterval[0])
-            console.log(datapoints[i+1].moment)
-            console.log(dateInterval[1])
-            return
-            */
             if (datapoints[i].moment >=  dateInterval[0] && datapoints[i+1].moment <= dateInterval[1]) { // choose range
-              if (datapoints[i].state == 1) sumClosed += datapoints[i].timer
-              else sumInterrupted += datapoints[i].timer
+              threeMinIterator = Math.floor((datapoints[i].moment.getTime() - dateInterval[0].getTime()) / (1000*60*3))
+              threeMinStart = dateInterval[0].setMinutes(threeMinIterator*3)
+              threeMinEnd = dateInterval[0].setSeconds(threeMinIterator*3+3)
+              tmpThreeMinStats[threeMinIterator] = 0
+              if (sumClosed<100) {/*
+                console.log("INTERVAL")
+                console.log(dateInterval[0])
+                console.log(datapoints[i].moment)      
+                //console.log((datapoints[i].moment.getTime() - dateInterval[0].getTime()) / (1000*60*3))
+                console.log(threeMinStart)*/
+              }
+              if (datapoints[i].timer != undefined && datapoints[i].timer < 60*60) {
+                if (datapoints[i].state == 1) {
+                  sumClosed += datapoints[i].timer
+                  if (datapoints[i].moment >=  threeMinStart && datapoints[i+1].moment <= threeMinEnd) {
+                    if (tmpThreeMinStats[threeMinIterator] == 0){
+                      tmpThreeMinStats[threeMinIterator] += (datapoints[i].moment - threeMinStart) / 1000
+                    }
+                  }                    
+                }
+                else {
+                  sumInterrupted += datapoints[i].timer
+                  if (datapoints[i].moment >=  threeMinStart && datapoints[i+1].moment <= threeMinEnd) {
+                    if ( datapoints[i+1].moment > threeMinEnd){
+                      tmpThreeMinStats[threeMinIterator] += (threeMinEnd - datapoints[i+1].moment) / 1000
+                    }
+                    else {
+                      tmpThreeMinStats[threeMinIterator] += datapoints[i].timer / 1000 
+                    }
+                  }                  
+                }
+              }
             }
           }
         }
+        $scope.threeMinStats.push(tmpThreeMinStats)
+        console.log(tmpThreeMinStats)
         $scope.dailyStats.push({
           start: dateInterval[0],
           end: dateInterval[1],
@@ -118,6 +146,12 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
       $scope.datapoints = $scope.datapoints.concat(datapoints)
     })
   })
+
+  // charts
+
+  $scope.labels = ["16", "17", "18", "19", "20", "21", "July"];
+  $scope.series = ["datapoints"];
+  $scope.data = [[28, 48, 40, 19, 86, 27, 90]];
 
   init = function() {
 
@@ -216,7 +250,7 @@ socket.on('raw', function(msg){
         default:
           return format(Math.floor(seconds / year), 'year');
       }*/
-      return Math.floor(seconds / hour) + ":" + Math.floor(seconds / minute) + ":" + Math.floor(seconds) +  "." + Math.floor(1000*(milliseconds/1000 - Math.floor(milliseconds/1000))) 
+      return Math.floor(seconds / hour) + ":" + Math.floor(seconds % minute) + ":" + Math.floor(seconds % 60) +  "." + Math.floor(1000*(milliseconds/1000 - Math.floor(milliseconds/1000))) 
     };
   });
 

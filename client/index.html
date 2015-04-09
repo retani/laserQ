@@ -2,13 +2,14 @@
 <html ng-app="App">
   <head>
     <title>Das unsichtbare Quadrat</title>
-    <link rel="stylesheet" type="text/css" href="public/styles.css">
+    <link rel="stylesheet" type="text/css" href="public/styles.css">     
     <script src="/jquery.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
      socket = io();
     </script>
     <script src="/angular/angular.js"></script>
+    <script src="/Chart/Chart.js"></script>            
     <script src="/public/controller.js"></script>
   </head>
   <body ng-controller="frontpage" ng-class="{interrupted : datapoint.state==0}">
@@ -43,9 +44,9 @@
       <div id="interruption_count_indicator" ng-show="datapoint.state==0">
         {{datapoint.count}}
       </div>
-      <!--div id="total">
-        {{totalClosed}} / {{totalInterrupted}}
-      </div-->      
+      <div id="total">
+        {{ totalStats.sumClosed | readableTime  }} / {{totalStats.sumInterrupted | readableTime }}
+      </div>      
       <div id="clock">
         <p>{{ clock  | date:'dd.MM.yyyy HH:mm:ss'}}</p>
       </div>        
