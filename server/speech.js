@@ -4,7 +4,7 @@ var applvol = require('osx-wifi-volume-remote')
 //var ps = require('ps.js');
 
 system = "Alex"
-narrator = "Anna"; //"Markus"
+narrator = "Petra"; //"Markus"
 
 init = function() {
   if (!doSpeak) return;
@@ -47,7 +47,6 @@ interruption_start = function(){
     texts = [ 
       interruptionCounter + "te Quadratunterbrechung", 
       interruptionCounter, 
-      interruptionCounter + "!",
       interruptionCounter + "?",
       interruptionCounter + "?",
       interruptionCounter + "te"

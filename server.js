@@ -1,4 +1,4 @@
-doPlaySound = false
+doPlaySound = true
 doSpeak = true
 doSpeakIntro = false
 

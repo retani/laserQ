@@ -27,9 +27,10 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
     if (Date.now() >= dateInterval[0] && Date.now() <= dateInterval[1]) {
       $scope.currentDateNumber = i
     }
+    if ($scope.currentDateNumber == undefined) $scope.currentDateNumber = 7
   })
 
-  console.log("Today is the " + (1+$scope.currentDateNumber) + ". day")
+  console.log("Today is day " + (1+$scope.currentDateNumber) + ".")
 
   $scope.dailyStats = []
   $scope.totalStats = {}
@@ -165,7 +166,7 @@ angular.module('App').controller('frontpage', ['$scope', '$interval',
   // charts
 
   draw_canvas = function(i) {
-    console.log("drawin canvas #"+i)
+    //console.log("drawin canvas #"+i)
     var ctx = $(".canvas").get(i).getContext("2d")
     ctx.fillStyle = "rgb(200,0,0)";
     $scope.twoMinStats[i].forEach(function(y, x){
