@@ -4,7 +4,7 @@ var applvol = require('osx-wifi-volume-remote')
 //var ps = require('ps.js');
 
 system = "Alex"
-narrator = "Petra"; //"Markus"
+narrator = "Petra";//"Daniel"; //"Markus"
 
 init = function() {
   if (!doSpeak) return;
@@ -50,6 +50,7 @@ interruption_start = function(){
       interruptionCounter + "?",
       interruptionCounter + "?",
       interruptionCounter + "te"
+      /*"You have witnessed the " + interruptionCounter + "th interruption of the quadrangle. Congratulations."*/
       ]
     text = texts[[Math.floor(Math.random() * texts.length)]]
     speaking_starts()
